@@ -1,4 +1,5 @@
 import os
+from Utils.email_operations import email
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium import webdriver
@@ -32,8 +33,10 @@ class woofiNavegacao:
         options.add_experimental_option("excludeSwitches", ["enable-logging"])  
         service = Service(CHROME_DRIVER_PATH, log_output=os.devnull)
 
-        driver = None
+        driver = None 
+        print("tentando 5 vezes")
         for tentativa in range(1, MAX_TENTATIVAS_WOOFI + 1):
+           
             try:
 
                 service = Service(CHROME_DRIVER_PATH)
@@ -41,11 +44,12 @@ class woofiNavegacao:
 
                 driver.get(url_woofi)
                 driver.maximize_window()
+                print("janela do driver aberta")
 
                 WebDriverWait(driver, 15).until(
                     EC.presence_of_element_located((By.XPATH, "/html/body/div/div/div/div[1]/div/div/div/h1")))
-
                 if driver.current_url.startswith(url_woofi):
+                    print("acessa a url")
                     return driver
                 else:
                     driver.quit()
@@ -66,10 +70,13 @@ class woofiNavegacao:
             campo_login = wait.until(
                 EC.presence_of_element_located((By.ID, "email")))
             campo_login.send_keys(user_email)
+            print("procura onde inserir o email")
             campo_senha = wait.until(EC.presence_of_element_located((By.ID, "password")))
             campo_senha.send_keys(user_senha)
+            print("procura onde inserir a senha")
             clicar_enter = wait.until(EC.presence_of_element_located((By.XPATH, "/html/body/div/div/div/div[1]/div/div/form/div/div[4]/button")))
             clicar_enter.click()
+            print("clicou em enter")
             return True
         except WebDriverException as e:
             print(e)
@@ -82,6 +89,15 @@ class woofiNavegacao:
         """verifica se o valor for menor or igual de 150 e manda um email de aviso"""
         wait = WebDriverWait(driver, 20)
         campo_valor = wait.until(
-                EC.presence_of_element_located((By.XPATH, '//*[@id="current-value"]')))
-        print(campo_valor)
-        input("kjhjhj")
+                EC.presence_of_element_located((By.XPATH, "//span[@id='current-value' and contains(@class,'text-3xl')]")))
+        print("encontra o valor da conta")
+        valor = campo_valor.text
+        valor_float = float(valor.split('$')[1])
+        print("pega o valor depois do $ e fica float")
+        print(valor_float)
+        valor_float = 120
+        if valor_float <= 150:
+            print("menor ou igual")
+            email.enviarEmail(valor_float)
+        else:
+            print("maior ou igual")

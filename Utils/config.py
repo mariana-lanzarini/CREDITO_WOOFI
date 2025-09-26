@@ -9,6 +9,10 @@ class Config:
     senha_woofi:str = "TU6e8Sg8"
     url_woofi:str = "https://portal.woo-fi.com/login"
 
+
+    remetente:str = "svc.rpaextratos@melnick.com.br"
+    senha_remetente:str = "%LFcnXqs4R&y9?+L"
+    destinatario:str = "mariana@colbiz.io"
     @staticmethod
     def get_chrome_driver_path():
         # Tenta achar no PATH
